@@ -1,0 +1,64 @@
+<html>
+    <head>
+
+    </head>
+    <script>
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        function welcome()
+        {
+            let xhttp = new XMLHttpRequest();
+            xhttp.open("POST","/getInfoFromAuthToken");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("token="+getCookie("authToken"));
+            xhttp.onreadystatechange = function() {
+                if(this.readyState==4 && this.status == 200)
+                {
+                    console.log(this.response);
+                    console.log(JSON.parse(this.response));
+                    document.getElementById("welcome").innerHTML = "Welcome " + this.response.name;
+                    return this.response;
+                }
+                else
+                {
+                    //console.log(this.readyState + " " + this.status);
+                }
+            } 
+            
+        }
+        async function getDataFromToken()
+        {
+            let xhttp = new XMLHttpRequest();
+            xhttp.open("POST","/getInfoFromAuthToken");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            await xhttp.send("token="+getCookie("authToken"));
+            xhttp.onreadystatechange = function() {
+                if(this.readyState==4 && this.status == 200)
+                {
+                    console.log("Get data from token: "+this.response)
+                    return this.response;
+                }
+                else
+                {
+                    console.log(this.readyState + " " + this.status);
+                }
+            } 
+        }
+    </script>
+    <body onload = "welcome();">
+        <h1 id="welcome">Welcome</h1>
+    </body>
+</html>

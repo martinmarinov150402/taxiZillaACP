@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <script>
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        function login()
+        {
+            let xhttp = new XMLHttpRequest();
+            xhttp.open("GET", "/acpMain");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.setRequestHeader("authorization",getCookie("authToken"));
+            xhttp.send();
+            xhttp.onreadystatechange = function() { 
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log("TUKAassa");
+                    document.open();
+                    document.write(this.response);
+                    /*newHTML.close();
+                    document=newHTML;*/
+                }
+                else
+                {
+                    //console.log(this.readyState+);
+                }
+            }
+        }
+        function verifyToken()
+        {
+            let xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "/validateToken");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            console.log(document.getElementById("tokenText").value);
+            xhttp.send("token="+document.getElementById("tokenText").value);
+            xhttp.onreadystatechange = function() {
+                if(this.readyState==4 && this.status == 200)
+                {
+                    console.log(this.response);
+                    if(this.response!=false)
+                    {
+                        document.cookie = "authToken=" + this.response;
+                        login();
+                    }
+                }
+            } 
+        }
+        
+    </script>
+    <body>
+        <h1>Welcome to taxiZilla's administrative control panel</h1>
+        
+            <label>Please enter your administrative token to continue</label>
+            <input type="text" id="tokenText" placeholder="Administrative token">
+            <button onclick="verifyToken();">Влез</button>
+        
+    </body>
+</html>
